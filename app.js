@@ -475,6 +475,13 @@
 
   // Initialize
   initTheme();
+
+  // Prevent any browser selection or highlight boxes on clicks/touches
+  document.addEventListener('selectstart', (e) => {
+    e.preventDefault();
+    return false;
+  });
+
   window.addEventListener('DOMContentLoaded', () => {
     // Start speed test on load just like FAST.com
     setTimeout(startSpeedTest, 400);

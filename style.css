@@ -48,76 +48,58 @@ body.dark-theme {
   padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  -webkit-tap-highlight-color: transparent !important; /* Removes blue tap highlight flash on Chrome/Mobile */
+  -webkit-tap-highlight-color: transparent !important;
   -webkit-touch-callout: none !important;
-  user-select: none !important;
   -webkit-user-select: none !important;
+  -khtml-user-select: none !important;
   -moz-user-select: none !important;
   -ms-user-select: none !important;
+  user-select: none !important;
+  outline: none !important;
 }
 
-/* Eliminate blue text selection box everywhere */
-::selection {
+/* Eliminate blue text/element selection box everywhere */
+::selection,
+*::selection,
+::-moz-selection,
+*::-moz-selection,
+::-webkit-selection,
+*::-webkit-selection {
   background: transparent !important;
   color: inherit !important;
 }
 
-::-moz-selection {
-  background: transparent !important;
-  color: inherit !important;
+/* Eliminate default Chrome blue focus rings, borders, and active outlines on all elements */
+*:focus,
+*:focus-visible,
+*:active,
+*:hover:active {
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
 }
 
 img, svg {
   user-select: none !important;
   -webkit-user-select: none !important;
   -webkit-user-drag: none !important;
+  pointer-events: none !important;
 }
 
-/* Eliminate default Chrome blue focus rings and active outlines */
-button,
-a,
-input,
-svg,
-span,
-div,
-[role="button"],
-.refresh-btn,
-.pill-btn,
-.circle-btn,
-.header-btn,
-.powered-by,
-.lang-selector,
-.theme-toggle {
-  -webkit-tap-highlight-color: transparent !important;
-  outline: none !important;
+button, a, .clickable {
+  cursor: pointer;
+}
+
+button svg,
+a svg,
+.theme-toggle svg,
+.circle-btn svg,
+.refresh-btn svg,
+.chevron-icon {
+  pointer-events: none !important;
   user-select: none !important;
   -webkit-user-select: none !important;
-}
-
-button:focus,
-button:focus-visible,
-button:active,
-a:focus,
-a:focus-visible,
-a:active,
-.pill-btn:focus,
-.pill-btn:focus-visible,
-.pill-btn:active,
-.refresh-btn:focus,
-.refresh-btn:focus-visible,
-.refresh-btn:active,
-.circle-btn:focus,
-.circle-btn:focus-visible,
-.circle-btn:active,
-.theme-toggle:focus,
-.theme-toggle:focus-visible,
-.theme-toggle:active,
-.lang-selector:focus,
-.lang-selector:active {
-  outline: none !important;
-  box-shadow: none !important;
-  background-color: transparent;
-  -webkit-tap-highlight-color: transparent !important;
 }
 
 body {
