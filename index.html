@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Internet Speed Test | Vers Speed</title>
   <link rel="icon" type="image/png" href="logo_tight.png">
-  <link rel="stylesheet" href="style.css?v=8">
+  <link rel="stylesheet" href="style.css?v=9">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -256,9 +256,25 @@
     </div>
   </div>
 
+  <!-- Privacy Policy Modal -->
+  <div id="privacyModal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="privacyModalTitle">Privacy Policy</h3>
+        <button id="closePrivacyModalBtn" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body" id="privacyModalBody">
+        <!-- Injected via app.js -->
+      </div>
+      <div class="modal-footer" style="margin-top: 20px; text-align: right;">
+        <button id="gotItPrivacyBtn" class="pill-btn" style="background-color: var(--brand-red); color: #ffffff; border: none; font-weight: 600; padding: 8px 24px; cursor: pointer;">Got it</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div id="toast" class="toast hidden">Result copied to clipboard!</div>
 
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=9"></script>
 </body>
 </html>

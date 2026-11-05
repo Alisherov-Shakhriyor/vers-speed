@@ -39,6 +39,14 @@
       unitsLabel: "Units: <strong>Mbps</strong>",
       streamsLabel: "Streams: <strong>Parallel CDN</strong>",
       privacy: "Privacy",
+      privacyTitle: "Vers Speed Privacy Policy",
+      privacyP1: "<strong>Vers Speed</strong> respects your privacy. We are committed to a completely private and transparent speed testing experience:",
+      privacyLi1: "<strong>Zero Personal Data:</strong> We do not collect, store, or sell your personal information, browsing history, or downloads.",
+      privacyLi2: "<strong>IP Address & Location:</strong> Your public IP address is used only transiently to connect to the nearest Cloudflare Edge server and report your current network provider. It is never logged or tracked.",
+      privacyLi3: "<strong>No Cookies or Profiling:</strong> We do not set tracking cookies or create advertising profiles.",
+      privacyLi4: "<strong>Encrypted Connections:</strong> All test streams use secure, encrypted HTTPS/TLS protocols.",
+      privacyTip: "Vers Speed is 100% free and open, powered by Vers Ecosystem.",
+      gotIt: "Got it",
       helpTitle: "How Vers Speed Works",
       helpP1: "<strong>Vers Speed</strong> performs a realistic, high-precision test of your Internet connection using global edge CDN servers:",
       helpLi1: "<strong>Download Speed:</strong> Measures how fast data travels from servers to your device with parallel data streams.",
@@ -76,6 +84,14 @@
       unitsLabel: "Birlik: <strong>Mbps</strong>",
       streamsLabel: "Oqimlar: <strong>Parallel CDN</strong>",
       privacy: "Maxfiylik",
+      privacyTitle: "Vers Speed Maxfiylik Siyosati",
+      privacyP1: "<strong>Vers Speed</strong> sizning shaxsiy daxlsizligingizni qadrlaydi. Biz mutlaqo ochiq va xavfsiz tezlik o'lchash tajribasini taqdim etamiz:",
+      privacyLi1: "<strong>Shaxsiy ma'lumotlar yozilmaydi:</strong> Biz sizning shaxsiy ma'lumotlaringizni, brauzer tarixingizni yoki yuklamalaringizni yozib olmaymiz va uchinchi shaxslarga bermaymiz.",
+      privacyLi2: "<strong>IP Manzil va Joylashuv:</strong> Sizning ochiq IP manzilingiz faqat eng yaqin Cloudflare Edge serveriga ulanish va provayderingizni aniqlash uchun bir martalik ishlatiladi. U doimiy saqlanmaydi.",
+      privacyLi3: "<strong>Kuzatuv (Cookies) yo'q:</strong> Saytda hech qanday reklama yoki foydalanuvchini kuzatuvchi cookie-fayllar mavjud emas.",
+      privacyLi4: "<strong>Shifrlangan ulanish:</strong> Barcha test ma'lumotlari xavfsiz shifrlangan HTTPS/TLS protokollari orqali uzatiladi.",
+      privacyTip: "Vers Speed 100% bepul va reklamasiz, Vers Ecosystem tomonidan yaratilgan.",
+      gotIt: "Tushunarli",
       helpTitle: "Vers Speed Qanday Ishlaydi?",
       helpP1: "<strong>Vers Speed</strong> global edge CDN serverlari orqali internetingiz tezligini real vaqt rejimida yuqori aniqlikda o'lchaydi:",
       helpLi1: "<strong>Download (Yuklab olish):</strong> Ma'lumotlar serverdan qurilmangizga qanchalik tez yetib kelishini o'lchaydi.",
@@ -113,6 +129,14 @@
       unitsLabel: "Единицы: <strong>Мбит/с</strong>",
       streamsLabel: "Потоки: <strong>Parallel CDN</strong>",
       privacy: "Конфиденциальность",
+      privacyTitle: "Политика конфиденциальности Vers Speed",
+      privacyP1: "<strong>Vers Speed</strong> уважает вашу конфиденциальность. Мы обеспечиваем прозрачный и безопасный тест скорости интернета:",
+      privacyLi1: "<strong>Без сбора личных данных:</strong> Мы не сохраняем и не передаем третьим лицам ваши персональные данные или историю посещений.",
+      privacyLi2: "<strong>IP-адрес и локация:</strong> Ваш публичный IP-адрес используется исключительно для подключения к ближайшему серверу Cloudflare Edge и определения провайдера. Данные не сохраняются в базе.",
+      privacyLi3: "<strong>Без трекинга и cookies:</strong> На сайте нет рекламных трекеров или следящих cookies.",
+      privacyLi4: "<strong>Шифрованное соединение:</strong> Весь тестовый трафик передается по защищенному протоколу HTTPS/TLS.",
+      privacyTip: "Vers Speed работает бесплатно и без рекламы при поддержке Vers Ecosystem.",
+      gotIt: "Понятно",
       helpTitle: "Как работает Vers Speed",
       helpP1: "<strong>Vers Speed</strong> точно измеряет скорость вашего интернета с помощью глобальных серверов Cloudflare Edge CDN:",
       helpLi1: "<strong>Входящая скорость (Download):</strong> Скорость передачи данных с серверов на ваше устройство.",
@@ -142,6 +166,13 @@
   const helpModal = document.getElementById('helpModal');
   const closeModalBtn = document.getElementById('closeModalBtn');
   const toastEl = document.getElementById('toast');
+
+  // Privacy Modal Elements
+  const privacyModal = document.getElementById('privacyModal');
+  const closePrivacyModalBtn = document.getElementById('closePrivacyModalBtn');
+  const gotItPrivacyBtn = document.getElementById('gotItPrivacyBtn');
+  const privacyModalTitle = document.getElementById('privacyModalTitle');
+  const privacyModalBody = document.getElementById('privacyModalBody');
 
   // Metric fields
   const unloadedLatencyEl = document.getElementById('unloadedLatency');
@@ -258,6 +289,22 @@
         <p class="modal-tip">${t.helpTip}</p>
       `;
     }
+
+    // Privacy modal content
+    if (privacyModalTitle) privacyModalTitle.textContent = t.privacyTitle;
+    if (privacyModalBody) {
+      privacyModalBody.innerHTML = `
+        <p>${t.privacyP1}</p>
+        <ul>
+          <li>${t.privacyLi1}</li>
+          <li>${t.privacyLi2}</li>
+          <li>${t.privacyLi3}</li>
+          <li>${t.privacyLi4}</li>
+        </ul>
+        <p class="modal-tip">${t.privacyTip}</p>
+      `;
+    }
+    if (gotItPrivacyBtn) gotItPrivacyBtn.textContent = t.gotIt;
 
     // Active state in dropdown
     langOptions.forEach(opt => {
@@ -395,6 +442,22 @@
   helpModal.addEventListener('click', (e) => {
     if (e.target === helpModal) helpModal.classList.add('hidden');
   });
+
+  // Privacy Policy Modal Listeners
+  if (privacyBtn) {
+    privacyBtn.addEventListener('click', () => privacyModal.classList.remove('hidden'));
+  }
+  if (closePrivacyModalBtn) {
+    closePrivacyModalBtn.addEventListener('click', () => privacyModal.classList.add('hidden'));
+  }
+  if (gotItPrivacyBtn) {
+    gotItPrivacyBtn.addEventListener('click', () => privacyModal.classList.add('hidden'));
+  }
+  if (privacyModal) {
+    privacyModal.addEventListener('click', (e) => {
+      if (e.target === privacyModal) privacyModal.classList.add('hidden');
+    });
+  }
 
   shareBtn.addEventListener('click', () => {
     const t = TRANSLATIONS[currentLang];
