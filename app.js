@@ -1,6 +1,6 @@
 /**
  * VERS SPEED - High-Performance Internet Speed Test Engine
- * Inspired by Fast.com
+ * Inspired by Fast.com with Vers Innovations (Mbps = MB/s Converter & Multi-Language)
  */
 
 (function () {
@@ -11,7 +11,125 @@
   const CF_UP_URL = 'https://speed.cloudflare.com/__up';
   const TRACE_URL = 'https://cloudflare.com/cdn-cgi/trace';
 
+  // --- Translations Dictionary (EN, UZ, RU) ---
+  const TRANSLATIONS = {
+    en: {
+      langName: "English (US)",
+      pageTitle: "Internet Speed Test | Vers Speed",
+      speedLabel: "Your Internet speed is",
+      showMore: "Show more info",
+      showLess: "Show less info",
+      latency: "Latency",
+      unloaded: "Unloaded",
+      loaded: "Loaded",
+      upload: "Upload",
+      pending: "Pending",
+      testing: "Testing...",
+      completed: "Completed",
+      conversionTitle: "Real File Download Speed (Mbps vs MB/s)",
+      ispSub: "ISP Advertised (Megabits)",
+      actualSub: "Real Download (Megabytes)",
+      convDesc: "Internet providers sell speed in <strong>Mbps</strong> (Megabits per second), but browsers and apps (Telegram, Steam, YouTube) download files in <strong>MB/s</strong> (Megabytes per second). Divide by 8 to get your real downloading rate!",
+      movieExample: "Download 1 GB movie in:",
+      clientServer: "Client & Server",
+      clientIp: "Client IP:",
+      location: "Location:",
+      provider: "Provider (ASN):",
+      server: "Server:",
+      unitsLabel: "Units: <strong>Mbps</strong>",
+      streamsLabel: "Streams: <strong>Parallel CDN</strong>",
+      privacy: "Privacy",
+      helpTitle: "How Vers Speed Works",
+      helpP1: "<strong>Vers Speed</strong> performs a realistic, high-precision test of your Internet connection using global edge CDN servers:",
+      helpLi1: "<strong>Download Speed:</strong> Measures how fast data travels from servers to your device with parallel data streams.",
+      helpLi2: "<strong>Latency (Unloaded):</strong> The round-trip time of a request when there is no other traffic on your network.",
+      helpLi3: "<strong>Latency (Loaded):</strong> Measures responsiveness and bufferbloat under heavy data transfer.",
+      helpLi4: "<strong>Upload Speed:</strong> Measures how fast your device uploads data to the cloud.",
+      helpTip: "Tip: Close other bandwidth-heavy apps or downloads during the test for the most accurate result.",
+      toastCopied: "Result copied to clipboard!",
+      detecting: "Detecting...",
+      measuring: "Measuring..."
+    },
+    uz: {
+      langName: "O'zbekcha",
+      pageTitle: "Internet Tezligini Tekshirish | Vers Speed",
+      speedLabel: "Sizning Internet tezligingiz",
+      showMore: "Batafsil ma'lumot",
+      showLess: "Qisqartirish",
+      latency: "Kechikish (Ping)",
+      unloaded: "Odatiy (Yuklamasiz)",
+      loaded: "Yuklama ostida",
+      upload: "Yuklash (Upload)",
+      pending: "Kutilmoqda",
+      testing: "O'lchanmoqda...",
+      completed: "Yakunlandi",
+      conversionTitle: "Haqiqiy Fayl Yuklash Tezligi (Mbps va MB/s)",
+      ispSub: "Provayder tezligi (Megabit)",
+      actualSub: "Haqiqiy yuklash (Megabayt)",
+      convDesc: "Internet provayderlar tezlikni <strong>Mbps</strong> (Megabit/sekund)da sotadi, lekin fayllar (Telegram, Steam, YouTube, brauzer) <strong>MB/s</strong> (Megabayt/sekund)da yuklanadi. Haqiqiy tezlikni bilish uchun Mbps'ni 8 ga bo'ling!",
+      movieExample: "1 GB filmni yuklab olish vaqti:",
+      clientServer: "Mijoz va Server",
+      clientIp: "Mijoz IP:",
+      location: "Joylashuv:",
+      provider: "Provayder (ASN):",
+      server: "Server:",
+      unitsLabel: "Birlik: <strong>Mbps</strong>",
+      streamsLabel: "Oqimlar: <strong>Parallel CDN</strong>",
+      privacy: "Maxfiylik",
+      helpTitle: "Vers Speed Qanday Ishlaydi?",
+      helpP1: "<strong>Vers Speed</strong> global edge CDN serverlari orqali internetingiz tezligini real vaqt rejimida yuqori aniqlikda o'lchaydi:",
+      helpLi1: "<strong>Download (Yuklab olish):</strong> Ma'lumotlar serverdan qurilmangizga qanchalik tez yetib kelishini o'lchaydi.",
+      helpLi2: "<strong>Latency (Odatiy Ping):</strong> Tarmoqda boshqa yuklama bo'lmaganda so'rovning borib-kelish vaqti.",
+      helpLi3: "<strong>Loaded Latency (Yuklama ostida):</strong> Tarmoq to'liq yuklangandagi kechikish (bufferbloat).",
+      helpLi4: "<strong>Upload (Yuklash):</strong> Qurilmangizdan internetga fayl yuborish tezligi.",
+      helpTip: "Maslahat: Eng aniq natija uchun test vaqtida fondagi boshqa yuklamalarni to'xtatib turing.",
+      toastCopied: "Natija nusxalandi!",
+      detecting: "Aniqlanmoqda...",
+      measuring: "O'lchanmoqda..."
+    },
+    ru: {
+      langName: "Русский",
+      pageTitle: "Тест скорости интернета | Vers Speed",
+      speedLabel: "Скорость вашего интернета",
+      showMore: "Подробнее",
+      showLess: "Скрыть",
+      latency: "Задержка (Ping)",
+      unloaded: "Без нагрузки",
+      loaded: "Под нагрузкой",
+      upload: "Загрузка (Upload)",
+      pending: "В ожидании",
+      testing: "Измерение...",
+      completed: "Завершено",
+      conversionTitle: "Реальная скорость скачивания (Мбит/с и МБ/с)",
+      ispSub: "Тариф провайдера (Мегабит)",
+      actualSub: "Реальная скорость (Мегабайт)",
+      convDesc: "Провайдеры продают интернет в <strong>Мбит/с</strong> (Mbps), но файлы (Telegram, Steam, браузер) скачиваются в <strong>МБ/с</strong> (MB/s). Чтобы узнать реальную скорость скачивания, разделите Мбит/с на 8!",
+      movieExample: "Фильм 1 ГБ скачается за:",
+      clientServer: "Клиент и Сервер",
+      clientIp: "IP клиента:",
+      location: "Локация:",
+      provider: "Провайдер (ASN):",
+      server: "Сервер:",
+      unitsLabel: "Единицы: <strong>Мбит/с</strong>",
+      streamsLabel: "Потоки: <strong>Parallel CDN</strong>",
+      privacy: "Конфиденциальность",
+      helpTitle: "Как работает Vers Speed",
+      helpP1: "<strong>Vers Speed</strong> точно измеряет скорость вашего интернета с помощью глобальных серверов Cloudflare Edge CDN:",
+      helpLi1: "<strong>Входящая скорость (Download):</strong> Скорость передачи данных с серверов на ваше устройство.",
+      helpLi2: "<strong>Пинг без нагрузки (Unloaded):</strong> Время отклика сервера при свободной сети.",
+      helpLi3: "<strong>Пинг под нагрузкой (Loaded):</strong> Задержка и bufferbloat при максимальной загрузке сети.",
+      helpLi4: "<strong>Исходящая скорость (Upload):</strong> Скорость отправки файлов с вашего устройства в сеть.",
+      helpTip: "Совет: Для максимально точного результата закройте другие фоновые загрузки во время теста.",
+      toastCopied: "Результат скопирован!",
+      detecting: "Определение...",
+      measuring: "Измерение..."
+    }
+  };
+
+  let currentLang = 'en';
+
   // --- DOM Elements ---
+  const speedLabelEl = document.getElementById('speedLabel');
   const speedValueEl = document.getElementById('speedValue');
   const speedUnitEl = document.getElementById('speedUnit');
   const refreshBtn = document.getElementById('refreshBtn');
@@ -35,6 +153,37 @@
   const clientAsnEl = document.getElementById('clientAsn');
   const serverLocationEl = document.getElementById('serverLocation');
 
+  // Conversion card elements
+  const convMbpsVal = document.getElementById('convMbpsVal');
+  const convMBpsVal = document.getElementById('convMBpsVal');
+  const convEstTime = document.getElementById('convEstTime');
+  const tConversionTitle = document.getElementById('t-conversionTitle');
+  const tConvProviderSub = document.getElementById('t-convProviderSub');
+  const tConvActualSub = document.getElementById('t-convActualSub');
+  const tConversionDesc = document.getElementById('t-conversionDesc');
+  const tConvExampleText = document.getElementById('t-convExampleText');
+
+  // Translatable Labels
+  const tLatencyTitle = document.getElementById('t-latencyTitle');
+  const tUnloadedLabel = document.getElementById('t-unloadedLabel');
+  const tLoadedLabel = document.getElementById('t-loadedLabel');
+  const tUploadTitle = document.getElementById('t-uploadTitle');
+  const tClientServerTitle = document.getElementById('t-clientServerTitle');
+  const tClientIpLabel = document.getElementById('t-clientIpLabel');
+  const tLocationLabel = document.getElementById('t-locationLabel');
+  const tProviderLabel = document.getElementById('t-providerLabel');
+  const tServerLabel = document.getElementById('t-serverLabel');
+  const tUnitsSetting = document.getElementById('t-unitsSetting');
+  const tStreamsSetting = document.getElementById('t-streamsSetting');
+  const privacyBtn = document.getElementById('privacyBtn');
+
+  // Language Dropdown Elements
+  const langSelectorWrap = document.getElementById('langSelectorWrap');
+  const langBtn = document.getElementById('langBtn');
+  const currentLangText = document.getElementById('currentLangText');
+  const langDropdown = document.getElementById('langDropdown');
+  const langOptions = document.querySelectorAll('.lang-option');
+
   // --- State Variables ---
   let isTesting = false;
   let abortController = null;
@@ -42,6 +191,167 @@
   let finalUploadSpeed = 0;
   let displayedSpeed = 0;
   let animFrameId = null;
+
+  // --- Multi-Language Switcher ---
+  function setLanguage(lang) {
+    if (!TRANSLATIONS[lang]) lang = 'en';
+    currentLang = lang;
+    localStorage.setItem('vers_speed_lang', lang);
+    document.documentElement.lang = lang;
+
+    const t = TRANSLATIONS[lang];
+    document.title = t.pageTitle;
+    currentLangText.textContent = t.langName;
+    speedLabelEl.textContent = t.speedLabel;
+
+    // Toggle button text based on collapsed state
+    const isCollapsed = detailsPanel.classList.contains('collapsed');
+    moreInfoBtn.textContent = isCollapsed ? t.showMore : t.showLess;
+
+    // Latency & Upload titles
+    tLatencyTitle.textContent = t.latency;
+    tUnloadedLabel.textContent = t.unloaded;
+    tLoadedLabel.textContent = t.loaded;
+    tUploadTitle.textContent = t.upload;
+
+    // Upload status
+    if (uploadStatusText.textContent.includes('Pending') || uploadStatusText.textContent.includes('Kutilmoqda') || uploadStatusText.textContent.includes('В ожидании')) {
+      uploadStatusText.textContent = t.pending;
+    } else if (uploadStatusText.textContent.includes('Testing') || uploadStatusText.textContent.includes('O\'lchanmoqda') || uploadStatusText.textContent.includes('Измерение')) {
+      uploadStatusText.textContent = t.testing;
+    } else if (uploadStatusText.textContent.includes('Completed') || uploadStatusText.textContent.includes('Yakunlandi') || uploadStatusText.textContent.includes('Завершено')) {
+      uploadStatusText.textContent = t.completed;
+    }
+
+    // Conversion card
+    tConversionTitle.textContent = t.conversionTitle;
+    tConvProviderSub.textContent = t.ispSub;
+    tConvActualSub.textContent = t.actualSub;
+    tConversionDesc.innerHTML = t.convDesc;
+    tConvExampleText.textContent = t.movieExample;
+
+    // Client & Server
+    tClientServerTitle.textContent = t.clientServer;
+    tClientIpLabel.textContent = t.clientIp;
+    tLocationLabel.textContent = t.location;
+    tProviderLabel.textContent = t.provider;
+    tServerLabel.textContent = t.server;
+
+    // Bottom settings
+    tUnitsSetting.innerHTML = t.unitsLabel;
+    tStreamsSetting.innerHTML = t.streamsLabel;
+    privacyBtn.textContent = t.privacy;
+
+    // Help modal content
+    const modalHeaderH3 = helpModal.querySelector('.modal-header h3');
+    if (modalHeaderH3) modalHeaderH3.textContent = t.helpTitle;
+    const modalBody = helpModal.querySelector('.modal-body');
+    if (modalBody) {
+      modalBody.innerHTML = `
+        <p>${t.helpP1}</p>
+        <ul>
+          <li>${t.helpLi1}</li>
+          <li>${t.helpLi2}</li>
+          <li>${t.helpLi3}</li>
+          <li>${t.helpLi4}</li>
+        </ul>
+        <p class="modal-tip">${t.helpTip}</p>
+      `;
+    }
+
+    // Active state in dropdown
+    langOptions.forEach(opt => {
+      if (opt.getAttribute('data-lang') === lang) {
+        opt.classList.add('active');
+      } else {
+        opt.classList.remove('active');
+      }
+    });
+
+    // Update real-time conversion text calculation
+    if (displayedSpeed > 0) {
+      updateConversionRate(displayedSpeed);
+    }
+  }
+
+  function initLanguage() {
+    const savedLang = localStorage.getItem('vers_speed_lang');
+    if (savedLang && TRANSLATIONS[savedLang]) {
+      setLanguage(savedLang);
+    } else {
+      // Auto-detect browser language
+      const userLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+      if (userLang.startsWith('uz')) {
+        setLanguage('uz');
+      } else if (userLang.startsWith('ru')) {
+        setLanguage('ru');
+      } else {
+        setLanguage('en');
+      }
+    }
+  }
+
+  // Language Dropdown Toggle
+  langBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    langSelectorWrap.classList.toggle('open');
+    langDropdown.classList.toggle('hidden');
+  });
+
+  langOptions.forEach(opt => {
+    opt.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const lang = opt.getAttribute('data-lang');
+      setLanguage(lang);
+      langSelectorWrap.classList.remove('open');
+      langDropdown.classList.add('hidden');
+    });
+  });
+
+  document.addEventListener('click', () => {
+    langSelectorWrap.classList.remove('open');
+    langDropdown.classList.add('hidden');
+  });
+
+  // --- Real-Time Mbps vs MB/s Converter ---
+  function updateConversionRate(mbps) {
+    if (!mbps || mbps <= 0) {
+      convMbpsVal.textContent = '--';
+      convMBpsVal.textContent = '--';
+      convEstTime.textContent = '--';
+      return;
+    }
+
+    const roundedMbps = mbps >= 10 ? Math.round(mbps) : mbps.toFixed(1);
+    const mBps = mbps / 8;
+    const roundedMBps = mBps >= 10 ? (Math.round(mBps * 10) / 10).toFixed(1) : mBps.toFixed(2);
+
+    convMbpsVal.textContent = roundedMbps;
+    convMBpsVal.textContent = roundedMBps;
+
+    // 1 GB file = 1024 MB
+    const totalSeconds = 1024 / mBps;
+    if (totalSeconds < 60) {
+      const s = Math.max(1, Math.round(totalSeconds));
+      if (currentLang === 'uz') {
+        convEstTime.textContent = `~${s} soniya`;
+      } else if (currentLang === 'ru') {
+        convEstTime.textContent = `~${s} сек`;
+      } else {
+        convEstTime.textContent = `~${s} seconds`;
+      }
+    } else {
+      const mins = Math.floor(totalSeconds / 60);
+      const secs = Math.round(totalSeconds % 60);
+      if (currentLang === 'uz') {
+        convEstTime.textContent = `~${mins} daqiqa ${secs} soniya`;
+      } else if (currentLang === 'ru') {
+        convEstTime.textContent = `~${mins} мин ${secs} сек`;
+      } else {
+        convEstTime.textContent = `~${mins}m ${secs}s`;
+      }
+    }
+  }
 
   // --- Theme Management ---
   function initTheme() {
@@ -87,10 +397,11 @@
   });
 
   shareBtn.addEventListener('click', () => {
-    const text = `My Internet speed is ${speedValueEl.textContent} ${speedUnitEl.textContent} on Vers Speed!`;
+    const t = TRANSLATIONS[currentLang];
+    const text = `${t.speedLabel} ${speedValueEl.textContent} ${speedUnitEl.textContent} on Vers Speed! (https://vers-speed.vercel.app)`;
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(() => {
-        showToast('Result copied to clipboard!');
+        showToast(t.toastCopied);
       }).catch(() => {
         showToast(text);
       });
@@ -101,13 +412,14 @@
 
   // --- Show More Info Accordion ---
   moreInfoBtn.addEventListener('click', () => {
+    const t = TRANSLATIONS[currentLang];
     const isCollapsed = detailsPanel.classList.contains('collapsed');
     if (isCollapsed) {
       detailsPanel.classList.remove('collapsed');
-      moreInfoBtn.textContent = 'Show less info';
+      moreInfoBtn.textContent = t.showLess;
     } else {
       detailsPanel.classList.add('collapsed');
-      moreInfoBtn.textContent = 'Show more info';
+      moreInfoBtn.textContent = t.showMore;
     }
   });
 
@@ -130,7 +442,6 @@
   // --- Smooth Animation Loop ---
   let targetSpeed = 0;
   function updateSpeedTicker() {
-    // Easing interpolation
     const ease = isTesting ? 0.14 : 0.25;
     displayedSpeed += (targetSpeed - displayedSpeed) * ease;
 
@@ -138,11 +449,15 @@
     speedValueEl.textContent = fmt.val;
     speedUnitEl.textContent = fmt.unit;
 
+    // Update real-time conversion card as numbers climb
+    updateConversionRate(displayedSpeed);
+
     if (!isTesting && Math.abs(displayedSpeed - targetSpeed) < 0.2) {
       displayedSpeed = targetSpeed;
       const finalFmt = formatSpeed(displayedSpeed);
       speedValueEl.textContent = finalFmt.val;
       speedUnitEl.textContent = finalFmt.unit;
+      updateConversionRate(displayedSpeed);
       animFrameId = null;
       return;
     }
@@ -174,7 +489,6 @@
         if (colo) serverLocationEl.textContent = `Cloudflare Edge (${colo})`;
       }
     } catch (e) {
-      // Fallback trace
       try {
         const traceResp = await fetch(TRACE_URL, { signal, cache: 'no-store' });
         const text = await traceResp.text();
@@ -195,8 +509,9 @@
 
   // --- Unloaded Latency & Jitter Probes ---
   async function measureLatency(signal) {
+    const t = TRANSLATIONS[currentLang];
     const pings = [];
-    unloadedLatencyEl.innerHTML = `Measuring...`;
+    unloadedLatencyEl.innerHTML = `${t.measuring}`;
 
     for (let i = 0; i < 5; i++) {
       if (signal.aborted) return;
@@ -293,7 +608,7 @@
 
             samples.push({ time: now, bytes: len });
 
-            // Purge samples older than 1500ms for accurate windowed speed
+            // Purge samples older than 1500ms
             while (samples.length > 0 && samples[0].time < now - 1500) {
               samples.shift();
             }
@@ -350,6 +665,7 @@
     }
 
     setTargetSpeed(finalDownloadSpeed);
+    updateConversionRate(finalDownloadSpeed);
 
     // Update loaded latency display
     if (loadedPings.length > 0) {
@@ -358,7 +674,6 @@
     } else {
       loadedLatencyEl.innerHTML = `${Math.round(unloadedLatencyEl.textContent ? parseInt(unloadedLatencyEl.textContent) * 1.5 || 32 : 32)} <small>ms</small>`;
     }
-  }
   }
 
   async function measureLoadedLatencyProbe(signal) {
@@ -377,7 +692,8 @@
 
   // --- Upload Speed Measurement Engine ---
   async function measureUpload(signal) {
-    uploadStatusText.textContent = 'Testing...';
+    const t = TRANSLATIONS[currentLang];
+    uploadStatusText.textContent = t.testing;
     uploadStatusText.classList.add('active');
 
     const uploadBlobSize = 1024 * 1024 * 2; // 2MB payload
@@ -434,11 +750,11 @@
     }
 
     if (finalUploadSpeed <= 0) {
-      finalUploadSpeed = Math.round(finalDownloadSpeed * 0.45); // realistic estimate fallback
+      finalUploadSpeed = Math.round(finalDownloadSpeed * 0.45);
     }
 
     uploadSpeedEl.innerHTML = `${finalUploadSpeed >= 10 ? Math.round(finalUploadSpeed) : finalUploadSpeed.toFixed(1)} <small class="unit-sub">Mbps</small>`;
-    uploadStatusText.textContent = 'Completed';
+    uploadStatusText.textContent = t.completed;
     uploadStatusText.classList.remove('active');
   }
 
@@ -456,16 +772,20 @@
     abortController = new AbortController();
     const signal = abortController.signal;
 
+    const t = TRANSLATIONS[currentLang];
     isTesting = true;
     displayedSpeed = 0;
     targetSpeed = 0;
     speedValueEl.textContent = '0';
     speedValueEl.classList.add('testing');
     refreshBtn.classList.add('spinning');
-    uploadStatusText.textContent = 'Pending';
+    uploadStatusText.textContent = t.pending;
     uploadStatusText.classList.remove('active');
     uploadSpeedEl.innerHTML = `-- <small class="unit-sub">Mbps</small>`;
     loadedLatencyEl.innerHTML = `-- <small>ms</small>`;
+    convMbpsVal.textContent = '--';
+    convMBpsVal.textContent = '--';
+    convEstTime.textContent = '--';
 
     // Start animation loop immediately
     animFrameId = requestAnimationFrame(updateSpeedTicker);
@@ -486,6 +806,7 @@
     const finalFmt = formatSpeed(finalDownloadSpeed);
     speedValueEl.textContent = finalFmt.val;
     speedUnitEl.textContent = finalFmt.unit;
+    updateConversionRate(finalDownloadSpeed);
 
     // Await latency if not completed yet
     await latencyPromise;
@@ -505,14 +826,15 @@
     startSpeedTest();
   });
 
-  // Initialize
-  initTheme();
-
   // Prevent any browser selection or highlight boxes on clicks/touches
   document.addEventListener('selectstart', (e) => {
     e.preventDefault();
     return false;
   });
+
+  // Initialize
+  initTheme();
+  initLanguage();
 
   window.addEventListener('DOMContentLoaded', () => {
     // Start speed test on load just like FAST.com

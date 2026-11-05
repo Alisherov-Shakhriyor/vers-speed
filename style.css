@@ -182,24 +182,86 @@ body.dark-theme .theme-toggle .moon-icon {
   display: block;
 }
 
-.lang-selector {
+.lang-selector-wrap {
+  position: relative;
+}
+
+.lang-selector-btn {
+  background: none;
+  border: none;
   display: flex;
   align-items: center;
   gap: 4px;
   font-size: 13px;
+  font-family: inherit;
+  font-weight: 500;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 4px 6px;
-  border-radius: 4px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: all var(--transition-speed);
 }
 
-.lang-selector:hover {
+.lang-selector-btn:hover,
+.lang-selector-wrap.open .lang-selector-btn {
   color: var(--text-main);
+  background-color: var(--btn-hover-bg);
+}
+
+.lang-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  border-radius: 8px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 140px;
+  z-index: 100;
+}
+
+.lang-dropdown.hidden {
+  display: none !important;
+}
+
+.lang-option {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  width: 100%;
+}
+
+.lang-option:hover {
+  color: var(--text-main);
+  background-color: var(--btn-hover-bg);
+}
+
+.lang-option.active {
+  color: var(--brand-red);
+  font-weight: 700;
+  background-color: rgba(229, 9, 20, 0.08);
 }
 
 .chevron-icon {
   width: 14px;
   height: 14px;
+  transition: transform 0.2s ease;
+}
+
+.lang-selector-wrap.open .chevron-icon {
+  transform: rotate(180deg);
 }
 
 /* ==========================================================================
@@ -441,7 +503,7 @@ body.dark-theme .brand-v-logo {
   max-width: 680px;
   margin-top: 24px;
   opacity: 1;
-  max-height: 500px;
+  max-height: 900px;
   overflow: hidden;
   transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
 }
@@ -477,6 +539,116 @@ body.dark-theme .brand-v-logo {
 
 .detail-card-wide {
   grid-column: span 2;
+}
+
+/* ==========================================================================
+   Mbps vs MB/s Conversion Card (Vers Speed Superiority)
+   ========================================================================== */
+
+.conversion-card {
+  border-left: 3px solid var(--brand-red);
+  background: linear-gradient(135deg, rgba(229, 9, 20, 0.04), var(--card-bg));
+}
+
+.conversion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.formula-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brand-red);
+  background-color: rgba(229, 9, 20, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+  letter-spacing: 0.02em;
+}
+
+.conversion-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.conversion-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 12px;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+  border: 1px dashed var(--border-color);
+}
+
+body.dark-theme .conversion-display {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.conv-metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.conv-number {
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--text-main);
+}
+
+.conv-unit {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.conv-sub {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 3px;
+  text-align: center;
+}
+
+.highlight-mb .conv-number {
+  color: var(--accent-green);
+}
+
+.highlight-mb .conv-unit {
+  color: var(--accent-green);
+}
+
+.conv-equal {
+  font-size: 26px;
+  font-weight: 300;
+  color: var(--text-dim);
+}
+
+.conversion-explainer p {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.practical-example {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  background-color: var(--btn-hover-bg);
+  padding: 6px 12px;
+  border-radius: 6px;
+  color: var(--text-main);
+}
+
+.practical-example strong {
+  color: var(--brand-red);
+  font-weight: 800;
 }
 
 .detail-header {

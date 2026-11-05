@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Internet Speed Test | Vers Speed</title>
   <link rel="icon" type="image/png" href="logo_tight.png">
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -32,11 +32,18 @@
         </svg>
       </button>
 
-      <div class="lang-selector">
-        <span class="lang-text">English (US)</span>
-        <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
+      <div class="lang-selector-wrap" id="langSelectorWrap">
+        <button class="lang-selector-btn" id="langBtn" aria-label="Select Language">
+          <span class="lang-text" id="currentLangText">English (US)</span>
+          <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="lang-dropdown hidden" id="langDropdown">
+          <button class="lang-option active" data-lang="en">English (US)</button>
+          <button class="lang-option" data-lang="uz">O'zbekcha</button>
+          <button class="lang-option" data-lang="ru">Русский</button>
+        </div>
       </div>
 
       <button id="privacyBtn" class="header-link-btn">Privacy</button>
@@ -99,15 +106,15 @@
           <!-- Latency Column -->
           <div class="detail-card">
             <div class="detail-header">
-              <span class="detail-title">Latency</span>
+              <span class="detail-title" id="t-latencyTitle">Latency</span>
             </div>
             <div class="detail-subgrid">
               <div class="sub-metric">
-                <span class="sub-label">Unloaded</span>
+                <span class="sub-label" id="t-unloadedLabel">Unloaded</span>
                 <span class="sub-value" id="unloadedLatency">-- <small>ms</small></span>
               </div>
               <div class="sub-metric">
-                <span class="sub-label">Loaded</span>
+                <span class="sub-label" id="t-loadedLabel">Loaded</span>
                 <span class="sub-value" id="loadedLatency">-- <small>ms</small></span>
               </div>
             </div>
@@ -116,7 +123,7 @@
           <!-- Upload Column -->
           <div class="detail-card">
             <div class="detail-header">
-              <span class="detail-title">Upload</span>
+              <span class="detail-title" id="t-uploadTitle">Upload</span>
             </div>
             <div class="metric-single">
               <span class="metric-big-value" id="uploadSpeed">-- <small class="unit-sub">Mbps</small></span>
@@ -124,26 +131,61 @@
             </div>
           </div>
 
+          <!-- Mbps vs MB/s Real Download Rate Card (VERS SPEED EXCLUSIVE) -->
+          <div class="detail-card detail-card-wide conversion-card">
+            <div class="detail-header conversion-header">
+              <span class="detail-title" id="t-conversionTitle">Real File Download Speed (Mbps vs MB/s)</span>
+              <span class="formula-badge">1 Byte = 8 bits</span>
+            </div>
+            
+            <div class="conversion-body">
+              <div class="conversion-display">
+                <div class="conv-metric">
+                  <span class="conv-number" id="convMbpsVal">--</span>
+                  <span class="conv-unit">Mbps</span>
+                  <span class="conv-sub" id="t-convProviderSub">ISP Speed (Megabits)</span>
+                </div>
+                <div class="conv-equal">=</div>
+                <div class="conv-metric highlight-mb">
+                  <span class="conv-number" id="convMBpsVal">--</span>
+                  <span class="conv-unit">MB/s</span>
+                  <span class="conv-sub" id="t-convActualSub">Actual Download (Megabytes)</span>
+                </div>
+              </div>
+
+              <div class="conversion-explainer">
+                <p id="t-conversionDesc">
+                  Internet providers sell speed in <strong>Mbps</strong> (Megabits per second), but browsers and apps (Telegram, Steam, YouTube) download files in <strong>MB/s</strong> (Megabytes per second). Divide by 8 to get your real downloading rate!
+                </p>
+                <div class="practical-example">
+                  <span class="example-icon">💡</span>
+                  <span id="t-convExampleText">Download 1 GB movie in:</span>
+                  <strong id="convEstTime">--</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Network & Client Info Column -->
           <div class="detail-card detail-card-wide">
             <div class="detail-header">
-              <span class="detail-title">Client & Server</span>
+              <span class="detail-title" id="t-clientServerTitle">Client & Server</span>
             </div>
             <div class="client-info-list">
               <div class="info-row">
-                <span class="info-key">Client IP:</span>
+                <span class="info-key" id="t-clientIpLabel">Client IP:</span>
                 <span class="info-val" id="clientIp">Detecting...</span>
               </div>
               <div class="info-row">
-                <span class="info-key">Location:</span>
+                <span class="info-key" id="t-locationLabel">Location:</span>
                 <span class="info-val" id="clientLocation">Detecting...</span>
               </div>
               <div class="info-row">
-                <span class="info-key">Provider (ASN):</span>
+                <span class="info-key" id="t-providerLabel">Provider (ASN):</span>
                 <span class="info-val" id="clientAsn">Detecting...</span>
               </div>
               <div class="info-row">
-                <span class="info-key">Server:</span>
+                <span class="info-key" id="t-serverLabel">Server:</span>
                 <span class="info-val" id="serverLocation">Cloudflare Edge</span>
               </div>
             </div>
@@ -153,9 +195,9 @@
         <!-- Settings bar inside details -->
         <div class="details-footer">
           <div class="measurement-settings">
-            <span class="setting-item">Units: <strong>Mbps</strong></span>
+            <span class="setting-item" id="t-unitsSetting">Units: <strong>Mbps</strong></span>
             <span class="setting-separator">•</span>
-            <span class="setting-item">Streams: <strong>Parallel CDN</strong></span>
+            <span class="setting-item" id="t-streamsSetting">Streams: <strong>Parallel CDN</strong></span>
           </div>
         </div>
       </div>
@@ -217,6 +259,6 @@
   <!-- Toast Notification -->
   <div id="toast" class="toast hidden">Result copied to clipboard!</div>
 
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>
