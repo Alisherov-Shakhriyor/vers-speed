@@ -130,27 +130,28 @@
   // --- Smooth Animation Loop ---
   let targetSpeed = 0;
   function updateSpeedTicker() {
-    if (!isTesting && Math.abs(displayedSpeed - targetSpeed) < 0.2) {
-      displayedSpeed = targetSpeed;
-      const fmt = formatSpeed(displayedSpeed);
-      speedValueEl.textContent = fmt.val;
-      speedUnitEl.textContent = fmt.unit;
-      return;
-    }
-
     // Easing interpolation
-    const ease = isTesting ? 0.15 : 0.25;
+    const ease = isTesting ? 0.14 : 0.25;
     displayedSpeed += (targetSpeed - displayedSpeed) * ease;
 
     const fmt = formatSpeed(displayedSpeed);
     speedValueEl.textContent = fmt.val;
     speedUnitEl.textContent = fmt.unit;
 
+    if (!isTesting && Math.abs(displayedSpeed - targetSpeed) < 0.2) {
+      displayedSpeed = targetSpeed;
+      const finalFmt = formatSpeed(displayedSpeed);
+      speedValueEl.textContent = finalFmt.val;
+      speedUnitEl.textContent = finalFmt.unit;
+      animFrameId = null;
+      return;
+    }
+
     animFrameId = requestAnimationFrame(updateSpeedTicker);
   }
 
   function setTargetSpeed(mbps) {
-    targetSpeed = mbps;
+    targetSpeed = Math.max(0, mbps);
     if (!animFrameId) {
       animFrameId = requestAnimationFrame(updateSpeedTicker);
     }
@@ -232,31 +233,45 @@
     let lastLoadedCheck = performance.now();
     let loadedPings = [];
 
-    // Warm-up phase
-    try {
-      const warmResp = await fetch(`${CF_DOWN_URL}?bytes=500000&_t=${Date.now()}`, { signal, cache: 'no-store' });
-      const reader = warmResp.body.getReader();
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        totalBytes += value.byteLength;
-        const elapsed = (performance.now() - startTime) / 1000;
-        if (elapsed > 0) {
-          const instantMbps = (totalBytes * 8) / (elapsed * 1000000);
-          setTargetSpeed(instantMbps);
+    // Instant rapid warm-up streams (runs in parallel to start animating speed in under 50ms)
+    const runQuickWarmup = async (bytes, id) => {
+      try {
+        const resp = await fetch(`${CF_DOWN_URL}?bytes=${bytes}&_t=${Date.now()}_w${id}`, { signal, cache: 'no-store' });
+        if (!resp.body) return;
+        const reader = resp.body.getReader();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done || signal.aborted) break;
+          const now = performance.now();
+          const len = value.byteLength;
+          totalBytes += len;
+          samples.push({ time: now, bytes: len });
+          const elapsed = (now - startTime) / 1000;
+          if (elapsed > 0.04) {
+            const instantMbps = (totalBytes * 8) / (elapsed * 1000000);
+            setTargetSpeed(instantMbps);
+          }
         }
+      } catch (e) {
+        // ignore
       }
-    } catch (e) {
-      if (signal.aborted) return;
-    }
+    };
+
+    // Fire off quick small chunks first
+    await Promise.all([
+      runQuickWarmup(250000, 1),
+      runQuickWarmup(750000, 2)
+    ]);
+
+    if (signal.aborted) return;
 
     // Dynamic Multi-Stream Download Phase
-    const streamDurMs = 7500;
+    const streamDurMs = 7000;
     const testEndTime = performance.now() + streamDurMs;
     const parallelCount = 4;
 
     const runWorker = async (workerId) => {
-      let chunkSize = 5000000; // 5MB chunks
+      let chunkSize = 4000000; // 4MB chunks
       while (performance.now() < testEndTime && !signal.aborted) {
         try {
           const reqStart = performance.now();
@@ -278,17 +293,22 @@
 
             samples.push({ time: now, bytes: len });
 
-            // Purge samples older than 1800ms for accurate windowed speed
-            while (samples.length > 0 && samples[0].time < now - 1800) {
+            // Purge samples older than 1500ms for accurate windowed speed
+            while (samples.length > 0 && samples[0].time < now - 1500) {
               samples.shift();
             }
 
-            if (samples.length > 2) {
+            if (samples.length > 1) {
               const windowDuration = (now - samples[0].time) / 1000;
               const windowBytes = samples.reduce((acc, s) => acc + s.bytes, 0);
-              if (windowDuration > 0.2) {
+              if (windowDuration > 0.1) {
                 const currentMbps = (windowBytes * 8) / (windowDuration * 1000000);
                 setTargetSpeed(currentMbps);
+              }
+            } else {
+              const elapsed = (now - startTime) / 1000;
+              if (elapsed > 0.05) {
+                setTargetSpeed((totalBytes * 8) / (elapsed * 1000000));
               }
             }
 
@@ -302,12 +322,12 @@
           }
 
           const reqTime = (performance.now() - reqStart) / 1000;
-          if (reqTime < 0.8 && chunkSize < 25000000) {
-            chunkSize = Math.min(25000000, chunkSize * 2);
+          if (reqTime < 0.8 && chunkSize < 20000000) {
+            chunkSize = Math.min(20000000, chunkSize * 2);
           }
         } catch (err) {
           if (signal.aborted) return;
-          await new Promise(r => setTimeout(r, 200));
+          await new Promise(r => setTimeout(r, 150));
         }
       }
     };
@@ -338,6 +358,7 @@
     } else {
       loadedLatencyEl.innerHTML = `${Math.round(unloadedLatencyEl.textContent ? parseInt(unloadedLatencyEl.textContent) * 1.5 || 32 : 32)} <small>ms</small>`;
     }
+  }
   }
 
   async function measureLoadedLatencyProbe(signal) {
@@ -427,6 +448,11 @@
       abortController.abort();
     }
 
+    if (animFrameId) {
+      cancelAnimationFrame(animFrameId);
+      animFrameId = null;
+    }
+
     abortController = new AbortController();
     const signal = abortController.signal;
 
@@ -441,13 +467,14 @@
     uploadSpeedEl.innerHTML = `-- <small class="unit-sub">Mbps</small>`;
     loadedLatencyEl.innerHTML = `-- <small>ms</small>`;
 
-    // Step 1: Detect Network Metadata & Unloaded Ping in parallel
+    // Start animation loop immediately
+    animFrameId = requestAnimationFrame(updateSpeedTicker);
+
+    // Run Network Metadata and Latency concurrently in background (NON-BLOCKING)
     fetchNetworkMetadata(signal);
-    await measureLatency(signal);
+    const latencyPromise = measureLatency(signal);
 
-    if (signal.aborted) return;
-
-    // Step 2: High-speed Download Test
+    // Step 2: High-speed Download Test starts immediately
     await measureDownload(signal);
 
     if (signal.aborted) return;
@@ -460,8 +487,13 @@
     speedValueEl.textContent = finalFmt.val;
     speedUnitEl.textContent = finalFmt.unit;
 
+    // Await latency if not completed yet
+    await latencyPromise;
+
     // Step 3: Run Upload Test
-    await measureUpload(signal);
+    if (!signal.aborted) {
+      await measureUpload(signal);
+    }
   }
 
   // Restart / Reload Handlers
