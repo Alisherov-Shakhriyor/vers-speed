@@ -562,6 +562,7 @@ body.dark-theme .brand-v-logo {
   font-size: 15px;
   font-weight: 700;
   font-family: inherit;
+  text-decoration: none;
   transition: background-color var(--transition-speed), transform 0.15s ease;
 }
 
@@ -589,6 +590,14 @@ body.dark-theme .brand-v-logo {
   font-weight: 700;
   letter-spacing: 0.08em;
   color: var(--text-dim);
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.powered-by:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
 }
 
 .powered-brand {
