@@ -46,6 +46,43 @@ body.dark-theme {
   padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent !important; /* Removes blue tap highlight flash on Chrome/Mobile */
+}
+
+/* Eliminate default Chrome blue focus rings and active outlines */
+button,
+a,
+input,
+svg,
+[role="button"],
+.refresh-btn,
+.pill-btn,
+.circle-btn,
+.header-btn,
+.powered-by,
+.lang-selector {
+  -webkit-tap-highlight-color: transparent !important;
+  outline: none !important;
+}
+
+button:focus,
+button:focus-visible,
+button:active,
+a:focus,
+a:focus-visible,
+a:active,
+.pill-btn:focus,
+.pill-btn:focus-visible,
+.pill-btn:active,
+.refresh-btn:focus,
+.refresh-btn:focus-visible,
+.refresh-btn:active,
+.circle-btn:focus,
+.circle-btn:focus-visible,
+.circle-btn:active {
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 body {
@@ -365,6 +402,10 @@ body.dark-theme .brand-v-logo {
   padding: 8px 22px;
   border-radius: 6px;
   cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
   transition: all var(--transition-speed);
 }
 
