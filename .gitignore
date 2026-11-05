@@ -1,0 +1,4 @@
+test_screen*.png
+__pycache__/
+.DS_Store
+.vercel
