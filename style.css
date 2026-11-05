@@ -56,6 +56,23 @@ body.dark-theme {
   -ms-user-select: none !important;
   user-select: none !important;
   outline: none !important;
+  scrollbar-width: none !important; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none !important; /* Hide scrollbar for IE/Edge */
+}
+
+/* Hide all scrollbars completely for Chrome, Safari and WebKit */
+*::-webkit-scrollbar,
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+html, body {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 /* Eliminate blue text/element selection box everywhere */
