@@ -40,13 +40,37 @@ body.dark-theme {
   --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.6);
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent !important; /* Removes blue tap highlight flash on Chrome/Mobile */
+  -webkit-touch-callout: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+/* Eliminate blue text selection box everywhere */
+::selection {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+::-moz-selection {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+img, svg {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -webkit-user-drag: none !important;
 }
 
 /* Eliminate default Chrome blue focus rings and active outlines */
@@ -54,15 +78,20 @@ button,
 a,
 input,
 svg,
+span,
+div,
 [role="button"],
 .refresh-btn,
 .pill-btn,
 .circle-btn,
 .header-btn,
 .powered-by,
-.lang-selector {
+.lang-selector,
+.theme-toggle {
   -webkit-tap-highlight-color: transparent !important;
   outline: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
 }
 
 button:focus,
@@ -79,9 +108,15 @@ a:active,
 .refresh-btn:active,
 .circle-btn:focus,
 .circle-btn:focus-visible,
-.circle-btn:active {
+.circle-btn:active,
+.theme-toggle:focus,
+.theme-toggle:focus-visible,
+.theme-toggle:active,
+.lang-selector:focus,
+.lang-selector:active {
   outline: none !important;
   box-shadow: none !important;
+  background-color: transparent;
   -webkit-tap-highlight-color: transparent !important;
 }
 
